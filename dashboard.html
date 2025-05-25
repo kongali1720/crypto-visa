@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crypto VISA Dashboard</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #eee;
+    margin: 0; padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+  .balance {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 15px 30px;
+    margin-bottom: 30px;
+    display: flex; justify-content: space-around;
+  }
+  .balance div {
+    text-align: center;
+  }
+  .balance div h2 {
+    margin: 0;
+    font-size: 1.7rem;
+    color: #ffcc00;
+  }
+  .transactions {
+    background: #1f1f1f;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ddd;
+  }
+  th, td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #333;
+  }
+  th {
+    background: #222;
+  }
+  .chart-container {
+    background: #1f1f1f;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Crypto VISA Dashboard</h1>
+
+  <div class="balance">
+    <div>
+      <h3>ETH Balance</h3>
+      <h2 id="eth-balance">1.2345 ETH</h2>
+    </div>
+    <div>
+      <h3>IDR Balance</h3>
+      <h2 id="idr-balance">Rp 25,678,900</h2>
+    </div>
+    <div>
+      <h3>Conversion Rate</h3>
+      <h2 id="conversion-rate">Rp 20,800,000 / ETH</h2>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="balanceChart"></canvas>
+  </div>
+
+  <div class="transactions">
+    <h3>Recent Transactions</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Amount (ETH)</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="transactions-body">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Dummy Data
+  const conversionRate = 20800000; // IDR per ETH (static for demo)
+
+  let ethBalance = 1.2345;
+  let idrBalance = ethBalance * conversionRate;
+
+  // Update balance display
+  document.getElementById('eth-balance').textContent = ethBalance.toFixed(4) + ' ETH';
+  document.getElementById('idr-balance').textContent = 'Rp ' + idrBalance.toLocaleString('id-ID');
+  document.getElementById('conversion-rate').textContent = 'Rp ' + conversionRate.toLocaleString('id-ID') + ' / ETH';
+
+  // Simulated transactions
+  const transactions = [
+    { date: '2025-05-20', type: 'Deposit', amount: 0.5, status: 'Completed' },
+    { date: '2025-05-21', type: 'Withdrawal', amount: 0.2, status: 'Completed' },
+    { date: '2025-05-22', type: 'Purchase', amount: 0.1, status: 'Pending' },
+    { date: '2025-05-23', type: 'Deposit', amount: 0.6, status: 'Completed' },
+    { date: '2025-05-24', type: 'Purchase', amount: 0.0345, status: 'Completed' },
+  ];
+
+  const tbody = document.getElementById('transactions-body');
+  transactions.forEach(tx => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${tx.date}</td>
+      <td>${tx.type}</td>
+      <td>${tx.amount.toFixed(4)}</td>
+      <td>${tx.status}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Chart.js line chart for ETH balance over 7 days (simulated)
+  const ctx = document.getElementById('balanceChart').getContext('2d');
+  const balanceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['May 18', 'May 19', 'May 20', 'May 21', 'May 22', 'May 23', 'May 24'],
+      datasets: [{
+        label: 'ETH Balance',
+        data: [1.1, 1.15, 1.3, 1.1, 1.4, 1.3, ethBalance],
+        fill: false,
+        borderColor: '#ffcc00',
+        tension: 0.3,
+        pointBackgroundColor: '#ffcc00',
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: false }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#ffcc00'
+          }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
